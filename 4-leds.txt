@@ -1,0 +1,42 @@
+const int leds[] = {6, 7, 8, 9};   // pinos dos LEDs
+const int numLeds = 4;
+const int buzzerPin = 10;          // pino do buzzer
+
+// notas diferentes (em Hz) para cada LED
+const int tones[] = {523, 659, 784, 988};  
+// 523 = Dó, 659 = Mi, 784 = Sol, 988 = Si
+
+int baseDelay = 300;    // tempo inicial entre LEDs (ms)
+int minDelay = 80;      // velocidade máxima (limite mínimo)
+int step = 2;           // quanto reduz por piscada (menor = mais suave)
+
+void setup() {
+  for (int i = 0; i < numLeds; i++) {
+    pinMode(leds[i], OUTPUT);
+  }
+  pinMode(buzzerPin, OUTPUT);
+
+  // Inicializa o gerador de números aleatórios
+  randomSeed(analogRead(A0));  // use um pino analógico não conectado
+}
+
+void loop() {
+  int ledIndex = random(numLeds);   // escolhe LED aleatório
+
+  digitalWrite(leds[ledIndex], HIGH);
+  tone(buzzerPin, tones[ledIndex]);
+  delay(baseDelay / 2);
+  noTone(buzzerPin);
+
+  delay(baseDelay / 2);
+  digitalWrite(leds[ledIndex], LOW);
+
+  // 🔁 Acelera a cada piscada
+  if (baseDelay > minDelay) {
+    baseDelay -= step;
+  } 
+  else {
+    // Reinicia a velocidade quando atingir o máximo
+    baseDelay = 300;
+  }
+}
